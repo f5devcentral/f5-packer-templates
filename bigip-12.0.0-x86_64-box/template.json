@@ -1,0 +1,79 @@
+{
+  "builders": [
+    {
+      "name": "BIGIP-12.0.0.0.0.606",
+      "type": "virtualbox-iso",
+      "iso_url": "software/BIGIP-12.0.0.0.0.606.iso",
+      "iso_checksum": "89ebf4e55306f4c6e449f77c7aea562b",
+      "iso_checksum_type": "md5",
+      "ssh_username": "root",
+      "ssh_password": "default",
+      "ssh_wait_timeout": "30000s",
+      "headless": "false",
+      "shutdown_command": "shutdown -h now",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "Linux_64",
+      "vm_name": "BIGIP-12.0.0.0.0.606",
+      "boot_wait": "120s",
+      "boot_command": [
+        "<enter><wait5>",
+        "<enter><wait5>",
+        "<enter>"
+      ],
+      "disk_size": "160000",
+      "format": "ovf",
+      "vboxmanage": [
+        ["modifyvm","{{.Name}}","--memory","4096"],
+        ["modifyvm","{{.Name}}","--cpus","2"],
+        ["modifyvm","{{.Name}}","--nic1","NAT"],
+        ["modifyvm","{{.Name}}","--boot1","disk"]
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": 9,
+      "output": "{{ build_name }}.box"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir /shared/vagrant"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "files",
+      "destination": "/shared/vagrant"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/filesystem-rw.sh",
+        "scripts/sudo.sh",
+        "scripts/vagrant.sh",
+        "scripts/cleanup.sh"
+      ]
+    },
+    {
+      "type": "shell-local",
+      "command": "VBoxManage controlvm BIGIP-12.0.0.0.0.606 poweroff",
+      "pause_before": "10s"
+    },
+    {
+      "type": "shell-local",
+      "command": "VBoxManage startvm BIGIP-12.0.0.0.0.606",
+      "pause_before": "10s"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/wait-for-bigip.sh"
+      ],
+      "start_retry_timeout": "30m"
+    }
+  ]
+}
