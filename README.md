@@ -67,6 +67,13 @@ As new releases of BIG-IP happen (Hotfixes and major releases) I will update
 the packer templates here. Do not expect a new template to land until after the
 official F5 release.
 
+If you have interest in a release that is not found in this repo, and is listed
+as supported by F5 at our releases SOL5903 page here
+
+  * https://support.f5.com/kb/en-us/solutions/public/5000/900/sol5903.html
+  
+Then open an issue on Github and I will address it.
+
 ## Required packer version
 
 I always use the latest version, so use that. I build these images on a Mac. YMMV
