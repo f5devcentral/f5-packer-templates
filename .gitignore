@@ -3,3 +3,4 @@ f5-packer-templates.iml
 **/*.box
 **/*.iso
 **/packer_cache
+**/.vagrant
