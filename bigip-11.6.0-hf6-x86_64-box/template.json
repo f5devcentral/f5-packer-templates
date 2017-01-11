@@ -5,7 +5,7 @@
   },
   "builders": [
     {
-      "name": "BIGIP-11.6.0.6.0.442.HF6"
+      "name": "BIGIP-11.6.0.6.0.442.HF6",
       "type": "virtualbox-iso",
       "iso_url": "software/BIGIP-11.6.0.0.0.401.iso",
       "iso_checksum": "5a4fda25c0c40bd7c132b001a17e055b",
