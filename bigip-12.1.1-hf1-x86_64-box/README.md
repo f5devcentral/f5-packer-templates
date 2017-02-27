@@ -13,6 +13,7 @@ the packer command is run on.
 Download copies of the following files
 
   * BIGIP-12.1.0.0.0.1434
+  * Hotfix-BIGIP-12.1.1.1.0.196-HF1.iso
 
 and place them in the following folder.
 
