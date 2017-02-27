@@ -8,8 +8,9 @@ These directories contain packer templates that you can use to build BIG-IP
 images for things such as Virtualbox or other tools that you might use.
 
 The requirements to build these Vagrant boxes is nothing more than what is
-already available on F5's downloads.f5.com site. If you have access to that,
-then you have access to the necessary ISOs needed to make Vagrant boxes.
+already available on F5's [downloads.f5.com](https://downloads.f5.com) site.
+If you have access to that, then you have access to the necessary ISOs needed
+to make Vagrant boxes.
 
 The output of these templates is VE instances and the audience here that
 I am targetting is specifically those who need to develop something against
@@ -35,7 +36,7 @@ Those options are all probably less than ideal, but I don't make the rules.
 I guarantee that you will find no help from F5 official support. I'm
 putting this repository out there simply as a proof of concept.
 
-If something doesn't work, you're free to raise Issues in Github here, but
+If something does not work, you're free to raise Issues in Github here, but
 I may not respond to them immediately, or at all.
 
 ## Instructions
