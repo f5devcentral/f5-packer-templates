@@ -12,7 +12,7 @@ command is run on.
 
 Download copies of the following files
 
-  * BIGIP-11.5.4.0.0.256
+  * BIGIP-11.5.4.0.0.256.iso
 
 and place them in the following folder.
 
