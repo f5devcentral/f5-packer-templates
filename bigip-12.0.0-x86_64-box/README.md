@@ -12,7 +12,7 @@ the packer command is run on.
 
 Download copies of the following files
 
-  * BIGIP-12.0.0.0.0.606
+  * BIGIP-12.0.0.0.0.606.iso
 
 and place them in the following folder.
 
