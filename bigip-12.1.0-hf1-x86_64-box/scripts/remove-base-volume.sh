@@ -14,14 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This is added so that rsync synced_folder will work
-groupadd vagrant && usermod -a -G vagrant vagrant
-
-echo 'vagrant ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/vagrant
-mkdir -p /home/vagrant/.ssh
-chmod 0700 /home/vagrant/.ssh
-mv /shared/vagrant/files/vagrant.pub /home/vagrant/.ssh/authorized_keys
-chmod 0600 /home/vagrant/.ssh/authorized_keys
-chown -R vagrant:vagrant /home/vagrant/.ssh
+echo "tmsh delete sys software volume HD1.1"
+tmsh delete sys software volume HD1.1
 
 exit 0
