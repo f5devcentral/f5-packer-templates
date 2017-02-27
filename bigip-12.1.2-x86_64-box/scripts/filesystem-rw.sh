@@ -15,4 +15,4 @@
 # limitations under the License.
 
 mount -o remount,rw /dev/mapper/vg--db--hda-set.1._usr /usr
-exit0
+exit 0
