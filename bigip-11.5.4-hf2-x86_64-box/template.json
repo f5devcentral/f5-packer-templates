@@ -1,13 +1,14 @@
 {
   "variables": {
+    "F5_NAME": "BIGIP-11.5.4.2.0.291-HF2",
     "ISO_BASE": "BIGIP-11.5.4.0.0.256.iso",
     "ISO_HF": "Hotfix-BIGIP-11.5.4.2.0.291-HF2.iso"
   },
   "builders": [
     {
-      "name": "BIGIP-11.5.4.1.0.286-HF1",
+      "name": "{{ user `F5_NAME` }}",
       "type": "virtualbox-iso",
-      "iso_url": "software/BIGIP-11.5.4.0.0.256.iso",
+      "iso_url": "software/{{ user `ISO_BASE` }}",
       "iso_checksum": "caf7fbffd916932569338dadb38a0a87",
       "iso_checksum_type": "md5",
       "ssh_username": "root",
@@ -17,7 +18,7 @@
       "shutdown_command": "shutdown -h now",
       "guest_additions_mode": "disable",
       "guest_os_type": "Linux_64",
-      "vm_name": "BIGIP-11.5.4.2.0.291-HF2",
+      "vm_name": "{{ user `F5_NAME` }}",
       "boot_wait": "60s",
       "boot_command": [
         "<enter><wait5>",
@@ -68,6 +69,7 @@
         "scripts/sudo.sh",
         "scripts/simplejson.sh",
         "scripts/vagrant.sh",
+        "scripts/remove-base-volume.sh",
         "scripts/cleanup.sh",
         "scripts/wait-for-bigip.sh"
       ],
