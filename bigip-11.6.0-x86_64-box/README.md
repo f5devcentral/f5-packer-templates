@@ -20,7 +20,7 @@ and place them in the following folder.
 
 Next, run the following command
 
-  PACKER_LOG=1 packer build template.json
+    make
 
 and wait for it to finish. The resulting box will be found in your current
 working directory.
