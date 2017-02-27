@@ -1,13 +1,14 @@
 {
   "variables": {
+    "F5_NAME": "BIGIP-11.6.0.6.0.442-HF6",
     "ISO_BASE": "BIGIP-11.6.0.0.0.401.iso",
     "ISO_HF": "Hotfix-BIGIP-11.6.0.6.0.442-HF6.iso"
   },
   "builders": [
     {
-      "name": "BIGIP-11.6.0.6.0.442.HF6",
+      "name": "{{ user `F5_NAME` }}",
       "type": "virtualbox-iso",
-      "iso_url": "software/BIGIP-11.6.0.0.0.401.iso",
+      "iso_url": "software/{{ user `ISO_BASE` }}",
       "iso_checksum": "5a4fda25c0c40bd7c132b001a17e055b",
       "iso_checksum_type": "md5",
       "ssh_username": "root",
@@ -17,7 +18,7 @@
       "shutdown_command": "shutdown -h now",
       "guest_additions_mode": "disable",
       "guest_os_type": "Linux_64",
-      "vm_name": "BIGIP-11.6.0.6.0.442.HF6",
+      "vm_name": "{{ user `F5_NAME` }}",
       "boot_wait": "60s",
       "boot_command": [
         "<enter><wait5>",
@@ -69,6 +70,7 @@
         "scripts/save-bigip-conf.sh",
         "scripts/install-hotfix.sh",
         "scripts/wait-for-bigip.sh",
+        "scripts/remove-base-volume.sh",
         "scripts/cleanup.sh"
       ],
       "environment_vars": [
