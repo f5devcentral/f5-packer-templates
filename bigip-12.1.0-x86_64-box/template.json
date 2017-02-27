@@ -1,9 +1,12 @@
 {
+  "variables": {
+    "F5_NAME": "BIGIP-12.1.0.0.0.1434"
+  },
   "builders": [
     {
-      "name": "BIGIP-12.1.0.0.0.1434",
+      "name": "{{ user `F5_NAME` }}",
       "type": "virtualbox-iso",
-      "iso_url": "software/BIGIP-12.1.0.0.0.1434.iso",
+      "iso_url": "software/{{ user `F5_NAME` }}.iso",
       "iso_checksum": "c28911e9a058a256f233ffdbffea8c3c",
       "iso_checksum_type": "md5",
       "ssh_username": "root",
@@ -13,7 +16,7 @@
       "shutdown_command": "shutdown -h now",
       "guest_additions_mode": "disable",
       "guest_os_type": "Linux_64",
-      "vm_name": "BIGIP-12.1.0.0.0.1434",
+      "vm_name": "{{ user `F5_NAME` }}",
       "boot_wait": "60s",
       "boot_command": [
         "<enter><wait5>",
