@@ -1,0 +1,83 @@
+{
+  "variables": {
+    "F5_NAME": "BIGIP-11.6.1.1.0.326-HF1",
+    "ISO_BASE": "BIGIP-11.6.1.0.0.317.iso",
+    "ISO_HF": "Hotfix-BIGIP-11.6.1.1.0.326-HF1.iso"
+  },
+  "builders": [
+    {
+      "name": "{{ user `F5_NAME` }}",
+      "type": "virtualbox-iso",
+      "iso_url": "software/{{ user `ISO_BASE` }}",
+      "iso_checksum": "bf34a2564c08f0355fde7efc952d7075",
+      "iso_checksum_type": "md5",
+      "ssh_username": "root",
+      "ssh_password": "default",
+      "ssh_wait_timeout": "30000s",
+      "headless": "false",
+      "shutdown_command": "shutdown -h now",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "Linux_64",
+      "vm_name": "{{ user `F5_NAME` }}",
+      "boot_wait": "60s",
+      "boot_command": [
+        "<enter><wait5>",
+        "<enter><wait5>",
+        "<enter>"
+      ],
+      "disk_size": "160000",
+      "format": "ovf",
+      "vboxmanage": [
+        ["modifyvm","{{.Name}}","--memory","4096"],
+        ["modifyvm","{{.Name}}","--cpus","2"],
+        ["modifyvm","{{.Name}}","--nic1","NAT"],
+        ["modifyvm","{{.Name}}","--boot1","disk"]
+      ]
+    }
+  ],
+
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": 9,
+      "output": "{{ build_name }}.box"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir /shared/vagrant"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "files",
+      "destination": "/shared/vagrant"
+    },
+    {
+      "type": "file",
+      "source": "software",
+      "destination": "/shared/vagrant"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/filesystem-rw.sh",
+        "scripts/sudo.sh",
+        "scripts/simplejson.sh",
+        "scripts/vagrant.sh",
+        "scripts/save-bigip-conf.sh",
+        "scripts/install-hotfix.sh",
+        "scripts/wait-for-bigip.sh",
+        "scripts/remove-base-volume.sh",
+        "scripts/cleanup.sh"
+      ],
+      "environment_vars": [
+        "ISO_BASE={{ user `ISO_BASE` }}",
+        "ISO_HF={{ user `ISO_HF` }}"
+      ],
+      "start_retry_timeout": "30m"
+    }
+  ]
+}
