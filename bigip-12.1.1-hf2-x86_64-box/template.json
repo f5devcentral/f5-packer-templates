@@ -1,0 +1,154 @@
+{
+  "variables": {
+    "F5_NAME": "BIGIP-12.1.1.2.0.204-HF2",
+    "ISO_BASE": "BIGIP-12.1.1.0.0.184.iso",
+    "ISO_HF": "Hotfix-BIGIP-12.1.1.2.0.204-HF2.iso"
+  },
+  "builders": [
+    {
+      "name": "{{ user `F5_NAME` }}",
+      "type": "virtualbox-iso",
+      "iso_url": "software/{{ user `ISO_BASE` }}",
+      "iso_checksum": "598a64b925da5ff8fcafe9174e9c8fc7",
+      "iso_checksum_type": "md5",
+      "ssh_username": "root",
+      "ssh_password": "default",
+      "ssh_wait_timeout": "30000s",
+      "headless": "false",
+      "shutdown_command": "shutdown -h now",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "Linux_64",
+      "vm_name": "{{ user `F5_NAME` }}",
+      "boot_wait": "60s",
+      "boot_command": [
+        "<enter><wait5>",
+        "<enter><wait5>",
+        "<enter>"
+      ],
+      "disk_size": "160000",
+      "format": "ovf",
+      "vboxmanage": [
+        ["modifyvm","{{.Name}}","--memory","4096"],
+        ["modifyvm","{{.Name}}","--cpus","2"],
+        ["modifyvm","{{.Name}}","--nic1","nat"],
+        ["modifyvm","{{.Name}}","--boot1","disk"]
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": 9,
+      "output": "{{ build_name }}.box"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir /shared/vagrant",
+        "exit 0"
+      ],
+      "pause_before": "60s"
+    },
+    {
+      "type": "file",
+      "source": "files",
+      "destination": "/shared/vagrant"
+    },
+    {
+      "type": "file",
+      "source": "software",
+      "destination": "/shared/vagrant"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/install-hotfix.sh"
+      ],
+      "environment_vars": [
+        "ISO_BASE={{ user `ISO_BASE` }}",
+        "ISO_HF={{ user `ISO_HF` }}"
+      ]
+    },
+    {
+      "type": "shell-local",
+      "command": "VBoxManage controlvm {{ build_name }} poweroff",
+      "pause_before": "10s"
+    },
+    {
+      "type": "shell-local",
+      "command": "VBoxManage startvm {{ build_name }}",
+      "pause_before": "10s"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/wait-for-bigip.sh",
+        "scripts/filesystem-rw.sh",
+        "scripts/sudo.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "tmsh save /sys config",
+        "exit 0"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "tmsh create auth user vagrant password vagrant partition-access add { all-partitions { role admin } } shell bash",
+        "exit 0"
+      ]
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/vagrant.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "tmsh save /sys config",
+        "exit 0"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "shutdown -r now",
+        "exit 0"
+      ]
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/wait-for-bigip.sh"
+      ],
+      "start_retry_timeout": "30m",
+      "pause_before": "120s"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "tmsh delete sys software volume HD1.1",
+        "exit 0"
+      ],
+      "start_retry_timeout": "30m",
+      "pause_before": "60s"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/remove-base-volume.sh",
+        "scripts/cleanup.sh",
+        "scripts/wait-for-bigip.sh"
+      ],
+      "start_retry_timeout": "30m",
+      "pause_before": "120s"
+    }
+  ]
+}
