@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cd /shared/vagrant/files
+echo "tmsh delete sys software volume HD1.1"
+tmsh delete sys software volume HD1.1
 
-tar zxvf simplejson-2.1.0.tar.gz
-mv setuptools-0.6c11-py2.4.egg simplejson-2.1.0/
-cd simplejson-2.1.0 && python setup.py install
+exit 0
