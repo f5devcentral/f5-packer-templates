@@ -13,7 +13,7 @@ If you have access to that, then you have access to the necessary ISOs needed
 to make Vagrant boxes.
 
 The output of these templates is VE instances and the audience here that
-I am targetting is specifically those who need to develop something against
+I am targeting is specifically those who need to develop something against
 a BIG-IP.
 
 If you are familiar with a BIG-IPs licensing restrictions and Vagrant, you
