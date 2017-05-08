@@ -1,0 +1,67 @@
+{
+  "variables": {
+    "F5_NAME": "BIG-IQ-5.1.0.0.0.631"
+  },
+  "builders": [
+    {
+      "name": "{{ user `F5_NAME` }}",
+      "type": "virtualbox-iso",
+      "iso_url": "software/{{ user `F5_NAME` }}.iso",
+      "iso_checksum": "08be08b8e380a52d26412ad9140e80c9",
+      "iso_checksum_type": "md5",
+      "ssh_username": "root",
+      "ssh_password": "default",
+      "ssh_wait_timeout": "30000s",
+      "headless": "false",
+      "shutdown_command": "shutdown -h now",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "Linux_64",
+      "vm_name": "{{ user `F5_NAME` }}",
+      "boot_wait": "60s",
+      "boot_command": [
+        "<enter><wait5>",
+        "<enter><wait5>",
+        "<enter>"
+      ],
+      "disk_size": "160000",
+      "format": "ovf",
+      "vboxmanage": [
+        ["modifyvm","{{.Name}}","--memory","4096"],
+        ["modifyvm","{{.Name}}","--cpus","2"],
+        ["modifyvm","{{.Name}}","--nic1","NAT"],
+        ["modifyvm","{{.Name}}","--boot1","disk"]
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": 9,
+      "output": "{{ build_name }}.box"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir /shared/vagrant"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "files",
+      "destination": "/shared/vagrant"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/filesystem-rw.sh",
+        "scripts/sudo.sh",
+        "scripts/vagrant.sh",
+        "scripts/save-bigip-conf.sh",
+        "scripts/cleanup.sh"
+      ],
+      "start_retry_timeout": "30m"
+    }
+  ]
+}
