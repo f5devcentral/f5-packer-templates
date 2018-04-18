@@ -5,7 +5,8 @@
   "builders": [
   {
     "type": "vmware-iso",
-    "vm_name": "{{ user `F5_NAME` }}",
+    "name": "{{ user `F5_NAME` }}-vmware",
+    "vm_name": "{{ user `F5_NAME` }}-vmware",
     "communicator": "ssh",
     "headless": "false",
     "iso_url": "software/{{ user `F5_NAME` }}.iso",
@@ -34,7 +35,7 @@
     "vnc_port_min": 5900
     },
     {
-      "name": "{{ user `F5_NAME` }}",
+      "name": "{{ user `F5_NAME` }}-virtualbox",
       "type": "virtualbox-iso",
       "iso_url": "software/{{ user `F5_NAME` }}.iso",
       "iso_checksum": "c5e68ea9e815bc32e5b2eea01732e9af",
@@ -46,7 +47,7 @@
       "shutdown_command": "shutdown -h now",
       "guest_additions_mode": "disable",
       "guest_os_type": "Linux_64",
-      "vm_name": "{{ user `F5_NAME` }}",
+      "vm_name": "{{ user `F5_NAME` }}-virtualbox",
       "boot_wait": "60s",
       "boot_command": [
         "<enter><wait5>",
@@ -67,7 +68,7 @@
     {
       "type": "vagrant",
       "compression_level": 9,
-      "output": "{{ build_name }}-{{.Provider}}.box"
+      "output": "{{ build_name }}.box"
     }
   ],
   "provisioners": [
