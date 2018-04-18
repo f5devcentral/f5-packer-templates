@@ -28,8 +28,7 @@
         "RemoteDisplay.vnc.enabled": "false",
         "RemoteDisplay.vnc.port": "5900",
         "memsize": "4096",
-        "numvcpus": "2",
-        "scsi0.virtualDev": "lsisas1068"
+        "numvcpus": "2"
     },
     "vnc_port_max": 5980,
     "vnc_port_min": 5900
