@@ -1,0 +1,132 @@
+{
+  "variables": {
+    "F5_NAME": "BIGIP-13.1.0.1-0.0.8"
+  },
+  "builders": [
+  {
+    "type": "vmware-iso",
+    "name": "{{ user `F5_NAME` }}-vmware",
+    "vm_name": "{{ user `F5_NAME` }}-vmware",
+    "communicator": "ssh",
+    "headless": "false",
+    "iso_url": "software/{{ user `F5_NAME` }}.iso",
+    "iso_checksum": "c5e68ea9e815bc32e5b2eea01732e9af",
+    "iso_checksum_type": "md5",
+    "ssh_username": "root",
+    "ssh_password": "default",
+    "ssh_wait_timeout": "30000s",
+    "shutdown_command": "shutdown -h now",
+    "guest_os_type": "centos-64",
+    "vnc_bind_address": "0.0.0.0",
+    "boot_wait": "60s",
+    "boot_command": [
+        "<enter><wait5>",
+        "<enter><wait5>",
+        "<enter>"
+      ],
+    "disk_size": "160000",
+    "vmx_data": {
+        "RemoteDisplay.vnc.enabled": "false",
+        "RemoteDisplay.vnc.port": "5900",
+        "memsize": "4096",
+        "numvcpus": "2"
+    },
+    "vnc_port_max": 5980,
+    "vnc_port_min": 5900
+    },
+    {
+      "name": "{{ user `F5_NAME` }}-virtualbox",
+      "type": "virtualbox-iso",
+      "iso_url": "software/{{ user `F5_NAME` }}.iso",
+      "iso_checksum": "c5e68ea9e815bc32e5b2eea01732e9af",
+      "iso_checksum_type": "md5",
+      "ssh_username": "root",
+      "ssh_password": "default",
+      "ssh_wait_timeout": "30000s",
+      "headless": "false",
+      "shutdown_command": "shutdown -h now",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "Linux_64",
+      "vm_name": "{{ user `F5_NAME` }}-virtualbox",
+      "boot_wait": "60s",
+      "boot_command": [
+        "<enter><wait5>",
+        "<enter><wait5>",
+        "<enter>"
+      ],
+      "disk_size": "160000",
+      "format": "ovf",
+      "vboxmanage": [
+        ["modifyvm","{{.Name}}","--memory","4096"],
+        ["modifyvm","{{.Name}}","--cpus","2"],
+        ["modifyvm","{{.Name}}","--nic1","NAT"],
+        ["modifyvm","{{.Name}}","--boot1","disk"]
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": 9,
+      "output": "{{ build_name }}.box"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir /shared/vagrant",
+        "exit 0"
+      ],
+      "pause_before": "60s"
+    },
+    {
+      "type": "file",
+      "source": "files",
+      "destination": "/shared/vagrant"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/filesystem-rw.sh",
+        "scripts/sudo.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "tmsh save /sys config",
+        "exit 0"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "tmsh create auth user vagrant password vagrant partition-access add { all-partitions { role admin } } shell bash",
+        "exit 0"
+      ]
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/vagrant.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "tmsh save /sys config",
+        "exit 0"
+      ]
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/cleanup.sh",
+        "scripts/wait-for-bigip.sh"
+      ],
+      "start_retry_timeout": "30m",
+      "pause_before": "120s"
+    }
+  ]
+}
